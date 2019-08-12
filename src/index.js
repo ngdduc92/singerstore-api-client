@@ -1,6 +1,5 @@
 import ApiClient from './restClient';
 import PublicClient from './publicClient';
-import WebStoreClient from './webstoreClient';
 import ProductCategories from './api/productCategories';
 import Products from './api/products/products';
 import ProductOptions from './api/products/options';
@@ -28,13 +27,6 @@ import Settings from './api/settings';
 import Pages from './api/pages';
 import Redirects from './api/redirects';
 import Webhooks from './api/webhooks';
-import Files from './api/files';
-import AppSettings from './api/apps/settings';
-import WebStoreAccount from './webstore/account';
-import WebStoreServices from './webstore/services';
-import WebStoreServiceSettings from './webstore/serviceSettings';
-import WebStoreServiceActions from './webstore/serviceActions';
-import WebStoreServiceLogs from './webstore/serviceLogs';
 import Tenants from './api/tenants/tenants';
 import Users from './api/users/users';
 import Discounts from './api/discounts';
@@ -58,7 +50,6 @@ export default class Client {
 		this.apiKey = options.apiKey;
 		this.tenantId = options.tenantId;
 		this.token = options.token;
-		this.webstoreToken = options.webstoreToken;
 
 		const apiClient = new ApiClient({
 			baseUrl: this.apiBaseUrl,
@@ -71,13 +62,9 @@ export default class Client {
 			apiKey: this.apiKey,
 			tenantId: this.tenantId
 		});
-		const webstoreClient = new WebStoreClient({
-			token: this.webstoreToken
-		});
 
 		this.apiClient = apiClient;
 		this.publicClient = publicClient;
-		this.webstoreClient = webstoreClient;
 		this.products = new Products(apiClient);
 		this.products.options = new ProductOptions(apiClient);
 		this.products.options.values = new ProductOptionValues(apiClient);
@@ -106,9 +93,6 @@ export default class Client {
 		this.pages = new Pages(apiClient);
 		this.redirects = new Redirects(apiClient);
 		this.webhooks = new Webhooks(apiClient);
-		this.files = new Files(apiClient);
-		this.apps = {};
-		this.apps.settings = new AppSettings(apiClient);
 		this.tenants = new Tenants(apiClient);
 		this.users = new Users(apiClient);
 		this.discounts = new Discounts(apiClient);
@@ -127,19 +111,7 @@ export default class Client {
 		this.public.settings = new PublicSettings(publicClient);
 		this.public.redirects = new PublicRedirects(publicClient);
 		this.public.cart = new PublicCart(publicClient);
-		
-		this.webstore = {};
-		this.webstore.account = new WebStoreAccount(webstoreClient);
-		this.webstore.services = new WebStoreServices(webstoreClient);
-		this.webstore.services.settings = new WebStoreServiceSettings(
-			webstoreClient
-		);
-		this.webstore.services.actions = new WebStoreServiceActions(webstoreClient);
-		this.webstore.services.logs = new WebStoreServiceLogs(webstoreClient);
 	}
-
-	static authorizeInWebStore = (email, adminUrl) =>
-		WebStoreClient.authorize(email, adminUrl);
 
 	setTenantId(tenantId) {
 		this.tenantId = tenantId;
